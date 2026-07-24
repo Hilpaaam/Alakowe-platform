@@ -1,0 +1,14 @@
+run = "gunicorn config.wsgi:application"
+entrypoint = "main.py"
+
+[nix]
+channel = "stable-24_11"
+
+[deployment]
+build = ["pip", "install", "-r", "requirements.txt"]
+run = ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8000
+externalPort = 80
