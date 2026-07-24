@@ -1,0 +1,37 @@
+services:
+  # Django API
+  - type: web
+    name: alakowe-api
+    env: python
+    plan: starter
+    region: frankfurt
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "0"
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: "your-api-domain.onrender.com"
+
+  # Next.js frontend
+  - type: web
+    name: alakowe-web
+    env: node
+    plan: starter
+    region: frankfurt
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm run start"
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://your-api-domain.onrender.com"
+
+databases:
+  - name: alakowe-db
+    databaseName: alakowedb
+    user: alakowe
